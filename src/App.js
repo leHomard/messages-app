@@ -1,24 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useEffect, useState } from 'react';
+import { Box, Text } from '@chakra-ui/layout';
+
+import { MessagesList } from './components/MessagesList';
+import { MessagesListSkeleton } from './components/MessagesListSkeleton';
+import { MessageForm } from './components/MessageForm';
+import { getMessages } from './api/api';
+import { generateId } from './utils';
 
 function App() {
+  const [state, setState] = useState({
+    status: 'idle',
+    messages: [],
+    error: '',
+  });
+
+  const { status, messages, error } = state;
+
+  useEffect(() => {
+    setState({ ...state, status: 'pending' });
+    getMessages().then(
+      messages => setState({ status: 'resolved', messages }),
+      error => setState({ status: 'rejected', error })
+    );
+  }, []);
+
+  const handleAddMessage = useCallback(
+    message => {
+      const randomId = generateId;
+      const newMessage = { id: randomId, content: message, isPrivate: false };
+      setState({ ...state, messages: [...messages, newMessage] });
+    },
+    [setState, state, messages]
+  );
+
+  if (error) return <Text>{error}</Text>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Box m="0 auto" w="50%" h="100vh" p="2rem" mt="5rem">
+      {status === 'pending' ? (
+        <MessagesListSkeleton />
+      ) : (
+        <>
+          <Text fontSize="5xl" mb="2rem" textAlign="center">
+            Messages App
+          </Text>
+          <MessageForm addMessage={handleAddMessage} />
+          <MessagesList messages={messages} />
+        </>
+      )}
+    </Box>
   );
 }
 
