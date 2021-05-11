@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { InputGroup, Input, InputRightElement, Button } from '@chakra-ui/react';
 
-export function MessageForm({ addMessage }) {
+export const MessageForm = memo(({ addMessage }) => {
   const [message, setMessage] = useState('');
 
   const handleChange = e => setMessage(e.target.value);
@@ -27,4 +27,4 @@ export function MessageForm({ addMessage }) {
       </InputRightElement>
     </InputGroup>
   );
-}
+});

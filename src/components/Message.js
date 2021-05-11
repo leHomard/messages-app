@@ -23,7 +23,7 @@ export const Message = memo(({ content, isPrivate }) => {
         colorScheme={isPrivate ? 'red' : 'teal'}
         borderRadius="full"
       >
-        {isPrivate ? 'Private' : 'public'}
+        {isPrivate ? 'Private' : 'Public'}
       </Tag>
     </Box>
   );
